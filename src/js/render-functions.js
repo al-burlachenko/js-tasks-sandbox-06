@@ -7,7 +7,6 @@ const paginationBtn = document.getElementById('pagination');
 
 let gallery;
 // paginationBtn.addEventListener('click', () => {});
-
 function createGallery(images) {
   const galleryItems = images
     .map(element => {
@@ -35,6 +34,7 @@ function createGallery(images) {
     .join('');
 
   ul.insertAdjacentHTML('beforeend', galleryItems);
+
   if (!gallery) {
     gallery = new SimpleLightbox('.gallery a', {
       /* options */
