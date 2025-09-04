@@ -8,16 +8,29 @@ import {
   clearGallery,
   showLoader,
   hideLoader,
+  hideLoadMoreButton,
+  showLoadMoreButton,
 } from './js/render-functions';
 
 const formNode = document.querySelector('.form');
+const paginationBtn = document.getElementById('pagination');
+
+let page = 1;
+let input = '';
+paginationBtn.addEventListener('click', () => {
+  page += 1;
+  console.log(input, page);
+  drawGallery(input, page);
+});
 
 formNode.addEventListener('submit', evt => {
   evt.preventDefault();
-  clearGallery();
   showLoader();
+  clearGallery();
+  page = 1;
   const formData = new FormData(evt.currentTarget);
-  const input = formData.get('search-text');
+  input = formData.get('search-text');
+
   if (input.trim() === '') {
     iziToast.error({
       title: 'Hey!',
@@ -27,10 +40,23 @@ formNode.addEventListener('submit', evt => {
     hideLoader();
     return;
   }
-  getImagesByQuery(input)
-    .then(data => {
-      if (data.hits.length !== 0) {
-        createGallery(data.hits);
+  drawGallery(input, page);
+  evt.currentTarget.reset();
+});
+
+function drawGallery(input, page) {
+  getImagesByQuery(input, page)
+    .then(response => {
+      // console.log(response);
+      const totalPages = Math.ceil(
+        response.data.total / response.config.params.per_page
+      );
+      if (page < totalPages) {
+        showLoadMoreButton();
+      } else hideLoadMoreButton();
+
+      if (response.data.hits.length !== 0) {
+        createGallery(response.data.hits);
       } else
         iziToast.info({
           title: 'Sorry!',
@@ -48,5 +74,4 @@ formNode.addEventListener('submit', evt => {
         message: 'Something went wrong. Please try again later.',
       });
     });
-  evt.currentTarget.reset();
-});
+}
