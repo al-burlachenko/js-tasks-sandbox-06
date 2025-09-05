@@ -19,9 +19,6 @@ let page = 1;
 let input = '';
 let currentScrollPosition = 0;
 
-// let currentScrollPosition = document
-//   .querySelector('.gallery')
-//   .getBoundingClientRect().y;
 currentScrollPosition = formNode.getBoundingClientRect().height;
 
 paginationBtn.addEventListener('click', () => {
@@ -32,7 +29,6 @@ paginationBtn.addEventListener('click', () => {
     .querySelector('.gallery-card')
     .getBoundingClientRect();
   currentScrollPosition += 2 * cardSize.height;
-  // window.scrollBy(0, currentScrollPosition);
   window.scrollBy({
     top: currentScrollPosition,
     left: 0,
@@ -67,8 +63,9 @@ async function drawGallery(input, page) {
   const response = await getImagesByQuery(input, page);
   try {
     const totalPages = Math.ceil(
-      response.data.total / response.config.params.per_page
+      response.data.totalHits / response.config.params.per_page
     );
+
     if (page < totalPages) {
       showLoadMoreButton();
     } else {
