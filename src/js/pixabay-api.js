@@ -21,15 +21,8 @@ export default async function getImagesByQuery(query, page) {
         per_page: 15, //Accepted values: 3 - 200
       },
     });
-    // console.log(response);
-    //     data
-    // hits: (20) [{…}, {…}, ...]
-    // total: 10929
-    // totalHits: 500
     return response;
-  } catch {
-    err => {
-      throw err;
-    };
+  } catch (err) {
+    throw err;
   }
 }

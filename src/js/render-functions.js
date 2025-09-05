@@ -6,8 +6,26 @@ const ul = document.querySelector('.gallery');
 const paginationBtn = document.getElementById('pagination');
 
 let gallery;
-// paginationBtn.addEventListener('click', () => {});
-function createGallery(images) {
+
+function waitForImagesToLoad(container) {
+  const images = container.querySelectorAll('img');
+  return Promise.all(
+    Array.from(images).map(
+      img =>
+        new Promise(resolve => {
+          if (img.complete)
+            // true if the image has completely loaded; otherwise, the value is false
+            resolve();
+          else {
+            img.onload = () => resolve();
+            img.onerror = () => resolve(); // don’t block if broken
+          }
+        })
+    )
+  );
+}
+
+async function createGallery(images) {
   const galleryItems = images
     .map(element => {
       const {
@@ -21,7 +39,7 @@ function createGallery(images) {
       } = element;
       return `<li class="gallery-card">
         <a class="img-link" href="${largeImageURL}">
-          <div class="img-wrap"><img src="${webformatURL}" alt="${tags}" /></div>
+          <div class="img-wrap"><img src="${webformatURL}" alt="${tags}" loading="lazy"/></div>
              <ul class="gallery-item-stats">
                  <li class="gallery-item-stats-item">Likes <span>${likes}</span></li>
                  <li class="gallery-item-stats-item">Views <span>${views}</span></li>
@@ -32,8 +50,9 @@ function createGallery(images) {
     </li>`;
     })
     .join('');
-
   ul.insertAdjacentHTML('beforeend', galleryItems);
+
+  await waitForImagesToLoad(ul);
 
   if (!gallery) {
     gallery = new SimpleLightbox('.gallery a', {
@@ -58,15 +77,10 @@ function hideLoader() {
 function showLoadMoreButton() {
   paginationBtn.classList.add('visible');
 }
-// Ця функція нічого не приймає, Нічого не повертає.
-// повинна додавати клас для відображення
-// кнопки Load more.
+
 function hideLoadMoreButton() {
   paginationBtn.classList.remove('visible');
 }
-// Ця функція нічого не приймає, Нічого не повертає.
-// повинна прибирати клас для відображення
-// кнопки Load more.
 
 export {
   createGallery,

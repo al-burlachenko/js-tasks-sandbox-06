@@ -51,12 +51,12 @@ formNode.addEventListener('submit', evt => {
       message: 'Input is empty!',
       position: 'topRight',
     });
-    hideLoader();
+    setTimeout(hideLoader, 300);
     hideLoadMoreButton();
     return;
   }
   drawGallery(input, page);
-  evt.currentTarget.reset();
+  // evt.currentTarget.reset();
 });
 
 async function drawGallery(input, page) {
@@ -65,7 +65,12 @@ async function drawGallery(input, page) {
     const totalPages = Math.ceil(
       response.data.totalHits / response.config.params.per_page
     );
-
+    console.log(
+      response.data.totalHits,
+      '-->',
+      response.config.params.per_page * page,
+      page
+    );
     if (page < totalPages) {
       showLoadMoreButton();
     } else {
@@ -86,9 +91,9 @@ async function drawGallery(input, page) {
           'Sorry, there are no images matching your search query. Please try again!!',
         position: 'topRight',
       });
-    hideLoader();
+    setTimeout(hideLoader, 300);
   } catch (err) {
-    hideLoader();
+    setTimeout(hideLoader, 300);
     iziToast.error({
       title: 'Error',
       message: 'Something went wrong. Please try again later.',
